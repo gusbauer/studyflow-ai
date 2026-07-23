@@ -1,8 +1,55 @@
+/* Estilos generales */
 body {
-  background: #f8f9fa;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+main {
+  flex: 1;
+}
+.footer {
+  margin-top: auto;
 }
 
-h1 {
-  color: #0d6efd;
-  font-weight: bold;
+/* Mejora de tarjetas */
+.card {
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.card,
+.list-group-item {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Lista de tareas */
+.list-group-item {
+  background-color: var(--bs-dark);
+  border-color: var(--bs-gray-700);
+}
+
+/* Plan de estudio IA */
+.plan-content {
+  white-space: pre-wrap;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+.plan-content br {
+  display: block;
+  margin: 0.5rem 0;
 }

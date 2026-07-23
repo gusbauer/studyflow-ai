@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Plan de estudio IA{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><i class="bi bi-brain me-2"></i>Plan de estudio con IA</h1>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <!-- Área del plan -->
+    <div class="card shadow">
+      <div class="card-header">
+        <i class="bi bi-calendar-week me-2"></i>Plan semanal generado
+      </div>
+      <div class="card-body">
+        {% if plan %}
+        <div class="plan-content">{{ plan|replace('\n', '<br />')|safe }}</div>
+        {% else %}
+        <p class="text-muted">
+          Presiona el botón "Generar plan" para obtener un plan de estudio
+          personalizado basado en tus tareas pendientes.
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <!-- Panel de control -->
+    <div class="card shadow">
+      <div class="card-header"><i class="bi bi-gear me-2"></i>Acciones</div>
+      <div class="card-body">
+        <p><strong>Tareas pendientes:</strong> {{ tasks|length }}</p>
+        <form method="POST" action="{{ url_for('ai.generate_plan') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-primary w-100 mb-2">
+            <i class="bi bi-magic me-1"></i>Generar plan
+          </button>
+        </form>
+        <a
+          href="{{ url_for('dashboard.dashboard') }}"
+          class="btn btn-secondary w-100"
+          >Volver al Dashboard</a
+        >
+      </div>
+    </div>
+    <!-- Lista de tareas pendientes (resumen) -->
+    <div class="card shadow mt-3">
+      <div class="card-header">
+        <i class="bi bi-list-task me-2"></i>Tareas pendientes
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for task in tasks %}
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          {{ task.title }}
+          <span
+            class="badge {% if task.priority == 'high' %}bg-danger{% elif task.priority == 'medium' %}bg-warning{% else %}bg-info{% endif %}"
+            >{{ task.get_priority_label() }}</span
+          >
+        </li>
+        {% else %}
+        <li class="list-group-item text-muted">No hay tareas pendientes.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

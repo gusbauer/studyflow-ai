@@ -1,33 +1,39 @@
-{% extends "layout.html" %} {% block content %}
-
-<div class="container mt-5">
-  <h2>Create Task</h2>
-
-  <form method="POST">
-    {{ form.hidden_tag() }}
-
-    <div class="mb-3">
-      {{ form.title.label }} {{ form.title(class="form-control") }}
-    </div>
-
-    <div class="mb-3">
-      {{ form.description.label }} {{ form.description(class="form-control") }}
-    </div>
-
-    <div class="mb-3">
-      {{ form.subject.label }} {{ form.subject(class="form-control") }}
-    </div>
-
-    <div class="mb-3">
-      {{ form.priority.label }} {{ form.priority(class="form-select") }}
-    </div>
-
-    <div class="mb-3">
-      {{ form.due_date.label }} {{ form.due_date(class="form-control") }}
-    </div>
-
-    {{ form.submit(class="btn btn-success") }}
-  </form>
+{% extends "base.html" %} {% block title %}Detalle de tarea{% endblock %} {%
+block content %}
+<div class="card shadow">
+  <div class="card-header">
+    <h2>{{ task.title }}</h2>
+  </div>
+  <div class="card-body">
+    <p><strong>Materia:</strong> {{ task.subject }}</p>
+    <p>
+      <strong>Prioridad:</strong>
+      <span
+        class="badge {% if task.priority == 'high' %}bg-danger{% elif task.priority == 'medium' %}bg-warning{% else %}bg-info{% endif %}"
+        >{{ task.get_priority_label() }}</span
+      >
+    </p>
+    {% if task.due_date %}
+    <p>
+      <strong>Fecha límite:</strong> {{ task.due_date.strftime('%d/%m/%Y') }}
+    </p>
+    {% endif %} {% if task.estimated_time %}
+    <p><strong>Tiempo estimado:</strong> {{ task.estimated_time }} minutos</p>
+    {% endif %}
+    <p>
+      <strong>Estado:</strong> {{ 'Completada' if task.completed else
+      'Pendiente' }}
+    </p>
+    <p><strong>Descripción:</strong></p>
+    <p>{{ task.description or 'Sin descripción' }}</p>
+    <a
+      href="{{ url_for('tasks.edit_task', task_id=task.id) }}"
+      class="btn btn-primary"
+      >Editar</a
+    >
+    <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-secondary"
+      >Volver</a
+    >
+  </div>
 </div>
-
 {% endblock %}

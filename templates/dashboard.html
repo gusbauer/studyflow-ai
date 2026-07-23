@@ -1,13 +1,233 @@
-{% extends "layout.html" %} {% block content %}
-
-<div class="container mt-5">
-  <h2>Welcome {{ current_user.username }} 👋</h2>
-
-  <hr />
-
-  <a href="/task/new" class="btn btn-primary"> ➕ New Task </a>
-
-  <a href="/logout" class="btn btn-danger"> Logout </a>
+{% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block
+content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><i class="bi bi-speedometer2 me-2"></i>Dashboard</h1>
+  <a href="{{ url_for('tasks.create_task') }}" class="btn btn-primary">
+    <i class="bi bi-plus-circle me-1"></i>Nueva tarea
+  </a>
 </div>
 
+<!-- Tarjetas de estadísticas -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card text-white bg-primary">
+      <div class="card-body">
+        <h5 class="card-title"><i class="bi bi-list-task me-2"></i>Total</h5>
+        <p class="display-6">{{ total_tasks }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-white bg-success">
+      <div class="card-body">
+        <h5 class="card-title">
+          <i class="bi bi-check-circle me-2"></i>Completadas
+        </h5>
+        <p class="display-6">{{ completed_tasks }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-white bg-warning">
+      <div class="card-body">
+        <h5 class="card-title"><i class="bi bi-clock me-2"></i>Pendientes</h5>
+        <p class="display-6">{{ pending_tasks }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-white bg-danger">
+      <div class="card-body">
+        <h5 class="card-title">
+          <i class="bi bi-exclamation-triangle me-2"></i>Alta prioridad
+        </h5>
+        <p class="display-6">{{ high_priority_tasks }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Gráficos -->
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-pie-chart me-2"></i>Estado de tareas
+      </div>
+      <div class="card-body">
+        <canvas id="statusChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-bar-chart me-2"></i>Prioridades
+      </div>
+      <div class="card-body">
+        <canvas id="priorityChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-book me-2"></i>Materias (top 5)
+      </div>
+      <div class="card-body">
+        <canvas id="subjectChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-calendar-check me-2"></i>Productividad diaria (últimos 7
+        días)
+      </div>
+      <div class="card-body">
+        <canvas id="dailyChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tareas recientes -->
+<div class="card">
+  <div class="card-header">
+    <i class="bi bi-clock-history me-2"></i>Tareas recientes
+  </div>
+  <div class="card-body">
+    {% if recent_tasks %}
+    <div class="list-group">
+      {% for task in recent_tasks %}
+      <div
+        class="list-group-item d-flex justify-content-between align-items-center"
+      >
+        <div>
+          <span
+            class="badge {% if task.priority == 'high' %}bg-danger{% elif task.priority == 'medium' %}bg-warning{% else %}bg-info{% endif %} me-2"
+          >
+            {{ task.get_priority_label() }}
+          </span>
+          {{ task.title }}
+          <small class="text-muted ms-2">{{ task.subject }}</small>
+        </div>
+        <span
+          class="badge {% if task.completed %}bg-success{% else %}bg-secondary{% endif %}"
+        >
+          {{ 'Completada' if task.completed else 'Pendiente' }}
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-muted">No hay tareas recientes.</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Transferencia segura de JSON de Jinja a JS -->
+<script id="chart-data" type="application/json">
+  {{ chart_data|tojson|safe }}
+</script>
+
+<!-- Script para los gráficos -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const chartData = JSON.parse(
+      document.getElementById("chart-data").textContent,
+    );
+
+    // Gráfico de estado
+    const ctx1 = document.getElementById("statusChart").getContext("2d");
+    new Chart(ctx1, {
+      type: "doughnut",
+      data: {
+        labels: chartData.status.labels,
+        datasets: [
+          {
+            data: chartData.status.values,
+            backgroundColor: ["#28a745", "#ffc107"],
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: "bottom" } },
+      },
+    });
+
+    // Gráfico de prioridades
+    const ctx2 = document.getElementById("priorityChart").getContext("2d");
+    new Chart(ctx2, {
+      type: "bar",
+      data: {
+        labels: chartData.priority.labels,
+        datasets: [
+          {
+            label: "Tareas",
+            data: chartData.priority.values,
+            backgroundColor: ["#17a2b8", "#ffc107", "#dc3545"],
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } },
+      },
+    });
+
+    // Gráfico de materias
+    const ctx3 = document.getElementById("subjectChart").getContext("2d");
+    new Chart(ctx3, {
+      type: "bar",
+      data: {
+        labels: chartData.subjects.labels,
+        datasets: [
+          {
+            label: "Tareas",
+            data: chartData.subjects.values,
+            backgroundColor: "#0d6efd",
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } },
+      },
+    });
+
+    // Gráfico de productividad diaria
+    const ctx4 = document.getElementById("dailyChart").getContext("2d");
+    new Chart(ctx4, {
+      type: "line",
+      data: {
+        labels: chartData.daily_completed.labels,
+        datasets: [
+          {
+            label: "Tareas completadas",
+            data: chartData.daily_completed.values,
+            borderColor: "#28a745",
+            fill: false,
+            tension: 0.1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } },
+      },
+    });
+  });
+</script>
 {% endblock %}
