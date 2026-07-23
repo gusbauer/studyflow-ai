@@ -1,5 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import (
+    StringField,
+    PasswordField,
+    SubmitField,
+    TextAreaField,
+    SelectField,
+    DateField
+)
 from wtforms.validators import DataRequired, Email, Length
 
 
@@ -21,3 +28,44 @@ class RegisterForm(FlaskForm):
     )
 
     submit = SubmitField("Register")
+
+
+class LoginForm(FlaskForm):
+
+    email = StringField(
+        "Email",
+        validators=[DataRequired(), Email()]
+    )
+
+    password = PasswordField(
+        "Password",
+        validators=[DataRequired()]
+    )
+
+    submit = SubmitField("Login")
+class TaskForm(FlaskForm):
+
+    title = StringField(
+        "Title",
+        validators=[DataRequired()]
+    )
+
+    description = TextAreaField("Description")
+
+    subject = StringField("Subject")
+
+    priority = SelectField(
+        "Priority",
+        choices=[
+            ("Low", "Low"),
+            ("Medium", "Medium"),
+            ("High", "High")
+        ]
+    )
+
+    due_date = DateField(
+        "Due Date",
+        format="%Y-%m-%d"
+    )
+
+    submit = SubmitField("Save Task")

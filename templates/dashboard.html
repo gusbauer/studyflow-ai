@@ -1,0 +1,13 @@
+{% extends "layout.html" %} {% block content %}
+
+<div class="container mt-5">
+  <h2>Welcome {{ current_user.username }} 👋</h2>
+
+  <hr />
+
+  <a href="/task/new" class="btn btn-primary"> ➕ New Task </a>
+
+  <a href="/logout" class="btn btn-danger"> Logout </a>
+</div>
+
+{% endblock %}
