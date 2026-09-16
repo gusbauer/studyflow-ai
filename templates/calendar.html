@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Calendario{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1>
+            <i class="bi bi-calendar3 me-2"></i>
+            Calendario
+        </h1>
+
+        <p class="text-muted mb-0">
+            Organiza tus tareas según sus fechas límite.
+        </p>
+    </div>
+
+    <a href="{{ url_for('tasks.create_task') }}"
+       class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>
+        Nueva tarea
+    </a>
+</div>
+
+
+<!-- Leyenda -->
+
+<div class="card mb-4">
+    <div class="card-body">
+
+        <div class="d-flex flex-wrap gap-3">
+
+            <span>
+                <span class="urgency-dot urgency-dot-red"></span>
+                Vencida / Hoy
+            </span>
+
+            <span>
+                <span class="urgency-dot urgency-dot-orange"></span>
+                Próxima
+            </span>
+
+            <span>
+                <span class="urgency-dot urgency-dot-yellow"></span>
+                Esta semana
+            </span>
+
+            <span>
+                <span class="urgency-dot urgency-dot-green"></span>
+                Con margen
+            </span>
+
+            <span>
+                <span class="urgency-dot urgency-dot-gray"></span>
+                Completada
+            </span>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Calendario -->
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <div id="calendar"></div>
+
+    </div>
+</div>
+
+
+<!-- FullCalendar -->
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.18/index.global.min.js"></script>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const calendarElement = document.getElementById("calendar");
+
+    const calendar = new FullCalendar.Calendar(calendarElement, {
+
+        initialView: "dayGridMonth",
+
+        locale: "es",
+
+        firstDay: 1,
+
+        height: "auto",
+
+        headerToolbar: {
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,listWeek"
+        },
+
+        buttonText: {
+            today: "Hoy",
+            month: "Mes",
+            week: "Semana",
+            list: "Lista"
+        },
+
+        events: "{{ url_for('tasks.calendar_data') }}",
+
+        eventClick: function(info) {
+
+            if (info.event.url) {
+                info.jsEvent.preventDefault();
+
+                window.location.href = info.event.url;
+            }
+
+        },
+
+        eventDidMount: function(info) {
+
+            const props = info.event.extendedProps;
+
+            info.el.title =
+                info.event.title +
+                "\nMateria: " + props.subject +
+                "\nPrioridad: " + props.priority +
+                "\nEstado: " + props.urgency;
+
+        }
+
+    });
+
+    calendar.render();
+
+});
+
+</script>
+
+{% endblock %}

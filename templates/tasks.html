@@ -1,220 +1,472 @@
 {% extends "base.html" %}
+
 {% block title %}Mis Tareas{% endblock %}
+
 {% block content %}
+
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h1><i class="bi bi-list-task me-2"></i>Mis Tareas</h1>
-  <a href="{{ url_for('tasks.create_task') }}" class="btn btn-primary"
-    ><i class="bi bi-plus-circle me-1"></i>Nueva tarea</a
-  >
+
+    <div>
+        <h1>
+            <i class="bi bi-list-task me-2"></i>
+            Mis Tareas
+        </h1>
+
+        <p class="text-muted mb-0">
+            Gestiona y organiza tus tareas.
+        </p>
+    </div>
+
+    <div class="d-flex gap-2">
+
+        <a href="{{ url_for('tasks.calendar') }}"
+           class="btn btn-outline-primary">
+
+            <i class="bi bi-calendar3 me-1"></i>
+            Calendario
+
+        </a>
+
+        <a href="{{ url_for('tasks.create_task') }}"
+           class="btn btn-primary">
+
+            <i class="bi bi-plus-circle me-1"></i>
+            Nueva tarea
+
+        </a>
+
+    </div>
+
 </div>
 
-<!-- Barra de búsqueda y filtros -->
+
+<!-- Filtros -->
+
 <form method="GET" class="row g-3 mb-4">
-  <div class="col-md-4">
-    <div class="input-group">
-      <input
-        type="text"
-        class="form-control"
-        name="search"
-        placeholder="Buscar..."
-        value="{{ search }}"
-      />
-      <button class="btn btn-outline-secondary" type="submit">
-        <i class="bi bi-search"></i>
-      </button>
+
+    <div class="col-md-4">
+
+        <div class="input-group">
+
+            <input
+                type="text"
+                class="form-control"
+                name="search"
+                placeholder="Buscar tarea..."
+                value="{{ search }}"
+            >
+
+            <button class="btn btn-outline-secondary" type="submit">
+                <i class="bi bi-search"></i>
+            </button>
+
+        </div>
+
     </div>
-  </div>
-  <div class="col-md-2">
-    <select name="priority" class="form-select">
-      <option value="">Prioridad</option>
-      <option value="low" {% if priority == "low" %}selected{% endif %}>
-        Baja
-      </option>
-      <option value="medium" {% if priority == "medium" %}selected{% endif %}>
-        Media
-      </option>
-      <option value="high" {% if priority == "high" %}selected{% endif %}>
-        Alta
-      </option>
-    </select>
-  </div>
-  <div class="col-md-2">
-    <select name="subject" class="form-select">
-      <option value="">Materia</option>
-      {% for subj in subjects %}
-      <option value="{{ subj }}" {% if subject == subj %}selected{% endif %}>
-        {{ subj }}
-      </option>
-      {% endfor %}
-    </select>
-  </div>
-  <div class="col-md-2">
-    <select name="status" class="form-select">
-      <option value="">Estado</option>
-      <option value="pending" {% if status == "pending" %}selected{% endif %}>
-        Pendientes
-      </option>
-      <option value="completed" {% if status == "completed" %}selected{% endif %}>
-        Completadas
-      </option>
-    </select>
-  </div>
-  <div class="col-md-2">
-    <select name="sort" class="form-select">
-      <option value="recent" {% if sort == "recent" %}selected{% endif %}>
-        Más recientes
-      </option>
-      <option value="old" {% if sort == "old" %}selected{% endif %}>
-        Más antiguas
-      </option>
-      <option value="urgent" {% if sort == "urgent" %}selected{% endif %}>
-        Más urgentes
-      </option>
-      <option value="priority" {% if sort == "priority" %}selected{% endif %}>
-        Mayor prioridad
-      </option>
-    </select>
-  </div>
-  <div class="col-md-2">
-    <button type="submit" class="btn btn-secondary w-100">Aplicar</button>
-  </div>
+
+
+    <div class="col-md-2">
+
+        <select name="priority" class="form-select">
+
+            <option value="">Prioridad</option>
+
+            <option value="low"
+                {% if priority == "low" %}selected{% endif %}>
+                Baja
+            </option>
+
+            <option value="medium"
+                {% if priority == "medium" %}selected{% endif %}>
+                Media
+            </option>
+
+            <option value="high"
+                {% if priority == "high" %}selected{% endif %}>
+                Alta
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="col-md-2">
+
+        <select name="subject" class="form-select">
+
+            <option value="">Materia</option>
+
+            {% for subj in subjects %}
+
+            <option value="{{ subj }}"
+                {% if subject == subj %}selected{% endif %}>
+
+                {{ subj }}
+
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="col-md-2">
+
+        <select name="status" class="form-select">
+
+            <option value="">Estado</option>
+
+            <option value="pending"
+                {% if status == "pending" %}selected{% endif %}>
+                Pendientes
+            </option>
+
+            <option value="completed"
+                {% if status == "completed" %}selected{% endif %}>
+                Completadas
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="col-md-2">
+
+        <select name="sort" class="form-select">
+
+            <option value="recent"
+                {% if sort == "recent" %}selected{% endif %}>
+                Más recientes
+            </option>
+
+            <option value="old"
+                {% if sort == "old" %}selected{% endif %}>
+                Más antiguas
+            </option>
+
+            <option value="urgent"
+                {% if sort == "urgent" %}selected{% endif %}>
+                Más urgentes
+            </option>
+
+            <option value="priority"
+                {% if sort == "priority" %}selected{% endif %}>
+                Mayor prioridad
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="col-12">
+
+        <button type="submit"
+                class="btn btn-secondary">
+
+            <i class="bi bi-funnel me-1"></i>
+            Aplicar filtros
+
+        </button>
+
+        <a href="{{ url_for('tasks.list_tasks') }}"
+           class="btn btn-outline-secondary">
+
+            Limpiar
+
+        </a>
+
+    </div>
+
 </form>
 
-<!-- Lista de tareas -->
-{% if tasks %}
-<div class="list-group">
-  {% for task in tasks %}
-  <div class="list-group-item d-flex justify-content-between align-items-start">
-    <div class="ms-2 me-auto w-100">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <span
-            class="badge {% if task.priority == 'high' %}bg-danger{% elif task.priority == 'medium' %}bg-warning{% else %}bg-info{% endif %} me-2"
-            >{{ task.get_priority_label() }}</span
-          >
-          <strong>{{ task.title }}</strong>
-          <span class="text-muted ms-2">({{ task.subject }})</span>
-          {% if task.due_date %}
-          <span class="badge bg-secondary ms-2"
-            ><i class="bi bi-calendar me-1"></i>{{
-            task.due_date.strftime('%d/%m/%Y') }}</span
-          >
-          {% endif %} {% if task.estimated_time %}
-          <span class="badge bg-secondary ms-1"
-            ><i class="bi bi-clock me-1"></i>{{ task.estimated_time }} min</span
-          >
-          {% endif %} {% if task.is_overdue() %}
-          <span class="badge bg-danger ms-1">Vencida</span>
-          {% endif %}
-        </div>
-        <div>
-          <form
-            action="{{ url_for('tasks.toggle_task', task_id=task.id) }}"
-            method="POST"
-            class="d-inline toggle-task-form"
-          >
-            <button
-              type="submit"
-              class="btn btn-sm {% if task.completed %}btn-success{% else %}btn-outline-secondary{% endif %}"
-            >
-              {% if task.completed %}<i class="bi bi-check-circle-fill"></i>{%
-              else %}<i class="bi bi-circle"></i>{% endif %}
-            </button>
-          </form>
-          <a
-            href="{{ url_for('tasks.edit_task', task_id=task.id) }}"
-            class="btn btn-sm btn-outline-primary"
-            ><i class="bi bi-pencil"></i
-          ></a>
-          <button
-            class="btn btn-sm btn-outline-danger"
-            data-bs-toggle="modal"
-            data-bs-target="#deleteModal{{ task.id }}"
-          >
-            <i class="bi bi-trash"></i>
-          </button>
-        </div>
-      </div>
-      {% if task.description %}
-      <p class="mb-1 text-muted small">
-        {{ task.description[:100] }}{% if task.description|length > 100 %}...{%
-        endif %}
-      </p>
-      {% endif %}
-    </div>
-  </div>
 
-  <!-- Modal de confirmación de eliminación -->
-  <div
-    class="modal fade"
-    id="deleteModal{{ task.id }}"
-    tabindex="-1"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Confirmar eliminación</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-          ></button>
+<!-- Lista -->
+
+{% if tasks %}
+
+<div class="list-group">
+
+{% for task in tasks %}
+
+    {% set urgency = task.get_urgency() %}
+
+    <div class="list-group-item task-item
+        {% if task.completed %}task-completed{% endif %}">
+
+        <div class="row align-items-center">
+
+            <!-- Checkbox -->
+
+            <div class="col-auto">
+
+                <form action="{{ url_for('tasks.toggle_task', task_id=task.id) }}"
+      method="POST"
+      class="d-inline toggle-task-form">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+
+                    <button
+                        type="submit"
+                        class="task-check {% if task.completed %}completed{% endif %}"
+                        title="{% if task.completed %}Marcar como pendiente{% else %}Completar tarea{% endif %}"
+                    >
+
+                        {% if task.completed %}
+
+                            <i class="bi bi-check-lg"></i>
+
+                        {% else %}
+
+                            <i class="bi bi-circle"></i>
+
+                        {% endif %}
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- Información -->
+
+            <div class="col">
+
+                <div class="d-flex align-items-center flex-wrap gap-2">
+
+                    <strong class="task-title
+                        {% if task.completed %}text-decoration-line-through text-muted{% endif %}">
+
+                        {{ task.title }}
+
+                    </strong>
+
+
+                    <span class="badge
+                        {% if task.priority == 'high' %}
+                            bg-danger
+                        {% elif task.priority == 'medium' %}
+                            bg-warning text-dark
+                        {% else %}
+                            bg-info text-dark
+                        {% endif %}">
+
+                        {{ task.get_priority_label() }}
+
+                    </span>
+
+
+                    <span class="badge urgency-badge {{ urgency.css }}">
+
+                        {% if urgency.key == "overdue" %}
+                            <i class="bi bi-exclamation-octagon me-1"></i>
+
+                        {% elif urgency.key == "today" %}
+                            <i class="bi bi-alarm me-1"></i>
+
+                        {% elif urgency.key == "soon" %}
+                            <i class="bi bi-hourglass-split me-1"></i>
+
+                        {% elif urgency.key == "week" %}
+                            <i class="bi bi-calendar-week me-1"></i>
+
+                        {% elif urgency.key == "future" %}
+                            <i class="bi bi-calendar-check me-1"></i>
+
+                        {% else %}
+                            <i class="bi bi-check-circle me-1"></i>
+                        {% endif %}
+
+                        {{ urgency.label }}
+
+                    </span>
+
+                </div>
+
+
+                <div class="small text-muted mt-1">
+
+                    <i class="bi bi-book me-1"></i>
+                    {{ task.subject }}
+
+                    {% if task.due_date %}
+
+                        <span class="ms-3">
+
+                            <i class="bi bi-calendar3 me-1"></i>
+
+                            {{ task.due_date.strftime('%d/%m/%Y') }}
+
+                        </span>
+
+                    {% endif %}
+
+
+                    {% if task.estimated_time %}
+
+                        <span class="ms-3">
+
+                            <i class="bi bi-clock me-1"></i>
+
+                            {{ task.estimated_time }} min
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                {% if task.description %}
+
+                <p class="mb-0 mt-2 small text-muted">
+
+                    {{ task.description[:120] }}
+
+                    {% if task.description|length > 120 %}
+                        ...
+                    {% endif %}
+
+                </p>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Acciones -->
+
+            <div class="col-auto">
+
+                <a
+                    href="{{ url_for('tasks.task_detail', task_id=task.id) }}"
+                    class="btn btn-sm btn-outline-secondary"
+                    title="Ver tarea"
+                >
+
+                    <i class="bi bi-eye"></i>
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('tasks.edit_task', task_id=task.id) }}"
+                    class="btn btn-sm btn-outline-primary"
+                    title="Editar"
+                >
+
+                    <i class="bi bi-pencil"></i>
+
+                </a>
+
+
+                <button
+                    class="btn btn-sm btn-outline-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteModal{{ task.id }}"
+                    title="Eliminar"
+                >
+
+                    <i class="bi bi-trash"></i>
+
+                </button>
+
+            </div>
+
         </div>
-        <div class="modal-body">
-          ¿Estás seguro de eliminar la tarea
-          <strong>"{{ task.title }}"</strong>?
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-          >
-            Cancelar
-          </button>
-          <form
-            action="{{ url_for('tasks.delete_task', task_id=task.id) }}"
-            method="POST"
-          >
-            <button type="submit" class="btn btn-danger">Eliminar</button>
-          </form>
-        </div>
-      </div>
+
     </div>
-  </div>
-  {% endfor %}
+
+
+    <!-- Modal -->
+
+    <div
+        class="modal fade"
+        id="deleteModal{{ task.id }}"
+        tabindex="-1"
+        aria-hidden="true"
+    >
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        Confirmar eliminación
+                    </h5>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    ¿Seguro que quieres eliminar
+
+                    <strong>
+                        "{{ task.title }}"
+                    </strong>?
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                        Cancelar
+
+                    </button>
+
+
+                    <form action="{{ url_for('tasks.delete_task', task_id=task.id) }}"
+      method="POST">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <button type="submit" class="btn btn-danger">
+        <i class="bi bi-trash"></i>
+        Eliminar
+    </button>
+
+</form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endfor %}
+
 </div>
+
 {% else %}
-<div class="alert alert-info">No hay tareas que coincidan con los filtros.</div>
+
+<div class="alert alert-info">
+
+    <i class="bi bi-info-circle me-2"></i>
+
+    No hay tareas que coincidan con los filtros.
+
+</div>
+
 {% endif %}
 
-<script>
-  // Manejo de toggle de tareas con AJAX (opcional, pero mejora UX)
-  document.querySelectorAll(".toggle-task-form").forEach((form) => {
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      const action = this.action;
-      const token = this.querySelector('input[name="csrf_token"]')?.value || "";
-      fetch(action, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "X-CSRFToken": token,
-        },
-        body: new URLSearchParams(new FormData(this)),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            // Recargar la página para actualizar la lista
-            location.reload();
-          } else {
-            alert("Error al cambiar el estado.");
-          }
-        })
-        .catch((error) => console.error("Error:", error));
-    });
-  });
-</script>
 {% endblock %}

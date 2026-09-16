@@ -34,6 +34,29 @@ block content %}
     <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-secondary"
       >Volver</a
     >
+    <form action="{{ url_for('tasks.toggle_task', task_id=task.id) }}"
+      method="POST"
+      class="d-inline">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    {% if task.completed %}
+
+        <button type="submit" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-counterclockwise"></i>
+            Marcar como pendiente
+        </button>
+
+    {% else %}
+
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-circle"></i>
+            Marcar como completada
+        </button>
+
+    {% endif %}
+
+</form>
   </div>
 </div>
 {% endblock %}
