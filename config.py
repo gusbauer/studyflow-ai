@@ -14,7 +14,7 @@ class Config:
     
     # OpenAI API
     OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-    OPENAI_MODEL = os.environ.get('OPENAI_MODEL') or 'gpt-3.5-turbo'
+    OPENAI_MODEL = os.environ.get('OPENAI_MODEL') or 'gpt-5.6-luna'
     
     # Configuración de sesión
     PERMANENT_SESSION_LIFETIME = 86400  # 24 horas
